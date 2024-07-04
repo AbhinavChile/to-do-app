@@ -30,7 +30,9 @@ pipeline {
                     // Check if the port is in use and kill the process if it is
                     def isPortInUse = sh(script: "lsof -i:${PORT} -t", returnStdout: true).trim()
                     if (isPortInUse) {
-                        sh "kill -9 ${isPortInUse}"
+                        isPortInUse.split('\n').each { pid ->
+                            sh "kill -9 ${pid}"
+                        }
                     }
                 }
             }
