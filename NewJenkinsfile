@@ -4,6 +4,7 @@ pipeline {
         DOCKER_CREDENTIALS_ID = 'docker-cred'
         DOCKER_IMAGE = 'abhinav9111/to-do-app:v1'
         CONTAINER_NAME = 'to-do-app'
+        PORT = '8000'
     }
     stages {
         stage('Clean Workspace') {
@@ -23,6 +24,17 @@ pipeline {
                 }
             }
         }
+        stage('Ensure Port is Free') {
+            steps {
+                script {
+                    // Check if the port is in use and kill the process if it is
+                    def isPortInUse = sh(script: "lsof -i:${PORT} -t", returnStdout: true).trim()
+                    if (isPortInUse) {
+                        sh "kill -9 ${isPortInUse}"
+                    }
+                }
+            }
+        }
         stage('Pull Image from Docker Hub') {
             steps {
                 script {
@@ -36,7 +48,7 @@ pipeline {
         stage('Run New Container') {
             steps {
                 script {
-                    sh "docker run -d --name ${CONTAINER_NAME} -p 8000:8000 ${DOCKER_IMAGE}"
+                    sh "docker run -d --name ${CONTAINER_NAME} -p ${PORT}:${PORT} ${DOCKER_IMAGE}"
                 }
             }
         }
