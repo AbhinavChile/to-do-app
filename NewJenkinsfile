@@ -15,12 +15,12 @@ pipeline {
         stage('Stop and Remove Running Container') {
             steps {
                 script {
-                    // Check if the container is running and stop it if it is
+                    // Stop the container if it's running
                     def isRunning = sh(script: "docker ps -q -f name=${CONTAINER_NAME}", returnStdout: true).trim()
                     if (isRunning) {
                         sh "docker stop ${CONTAINER_NAME}"
                     }
-                    // Check if the container exists and remove it if it does
+                    // Remove the container if it exists
                     def isExisting = sh(script: "docker ps -a -q -f name=${CONTAINER_NAME}", returnStdout: true).trim()
                     if (isExisting) {
                         sh "docker rm ${CONTAINER_NAME}"
@@ -32,7 +32,7 @@ pipeline {
             steps {
                 script {
                     // Check if the port is in use and kill the process if it is
-                    def isPortInUse = sh(script: "lsof -i:${PORT} -t", returnStdout: true).trim()
+                    def isPortInUse = sh(script: "lsof -i:${PORT} -t || true", returnStdout: true).trim()
                     if (isPortInUse) {
                         isPortInUse.split('\n').each { pid ->
                             sh "kill -9 ${pid}"
