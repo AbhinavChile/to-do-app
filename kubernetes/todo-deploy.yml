@@ -15,6 +15,6 @@ spec:
     spec:
       containers:
       - name: todo-container
-        image: 
+        image: abhinav9111/to-do-app:v1
         ports:
         - containerPort: 80
