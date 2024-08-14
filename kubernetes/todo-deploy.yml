@@ -17,4 +17,4 @@ spec:
       - name: todo-container
         image: abhinav9111/to-do-app:v1
         ports:
-        - targetPort: 8000
+        - containerPort: 8000
